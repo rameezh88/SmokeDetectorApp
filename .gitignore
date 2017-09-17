@@ -4,6 +4,7 @@
 
 # Xcode
 #
+Pods/
 build/
 *.pbxuser
 !default.pbxuser
@@ -22,32 +23,35 @@ DerivedData
 *.xcuserstate
 project.xcworkspace
 
-# Android/IntelliJ
+# Android/IJ
 #
-build/
+*.iml
 .idea
 .gradle
 local.properties
-*.iml
 
 # node.js
 #
 node_modules/
 npm-debug.log
-yarn-error.log
+
+# Coverage
+#
+.nyc_output/
+coverage/
 
 # BUCK
+#
 buck-out/
 \.buckd/
-*.keystore
+android/app/libs
+android/keystores/debug.keystore
 
-# fastlane
+# Secrets
 #
-# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
-# screenshots whenever they are needed.
-# For more information about the recommended setup visit:
-# https://github.com/fastlane/fastlane/blob/master/fastlane/docs/Gitignore.md
-
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots
+Podfile.lock
+yarn.lock
+yarn-error.log
+android/app/src/main/assets/crashlytics-build.properties
+android/app/src/main/res/values/com_crashlytics_export_strings.xml
+ios/fastlane/
