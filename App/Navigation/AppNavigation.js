@@ -1,17 +1,24 @@
 import { StackNavigator } from 'react-navigation'
-import LaunchScreen from '../Containers/LaunchScreen'
+import SmokeAlarms from '../Containers/SmokeAlarms'
 
 import styles from './Styles/NavigationStyles'
 
 // Manifest of possible screens
 const PrimaryNav = StackNavigator({
-  LaunchScreen: { screen: LaunchScreen }
+  SmokeAlarms: {
+    screen: SmokeAlarms,
+  },
 }, {
-  // Default config for all screens
-  headerMode: 'none',
-  initialRouteName: 'LaunchScreen',
+  headerMode: 'float',
+  initialRouteName: 'SmokeAlarms',
   navigationOptions: {
-    headerStyle: styles.header
+    headerStyle: styles.header,
+    headerTitleStyle: {
+      color: 'white'
+    },
+    headerBackTitleStyle: {
+      color: 'white'
+    }
   }
 })
 
