@@ -1,40 +1,54 @@
 import { put, select } from 'redux-saga/effects'
-import GithubActions from '../Redux/GithubRedux'
-import { is } from 'ramda'
+import mqtt from 'react-native-mqtt'
 
 // exported to make available for tests
 export const selectAvatar = (state) => state.github.avatar
 
 // process STARTUP actions
-export function * startup (action) {
-  if (__DEV__ && console.tron) {
-    // straight-up string logging
-    console.tron.log('Hello, I\'m an example of how to log via Reactotron.')
+export function * startup (action, dispatch) {
+  startMqtt(dispatch)
+}
 
-    // logging an object for better clarity
-    console.tron.log({
-      message: 'pass objects for better logging',
-      someGeneratorFunction: selectAvatar
+function startMqtt (dispatch) {
+
+  const options = {
+    port: 1883,
+    auth: false,
+    keepalive: 45,
+    tls: false,
+    selfSignedCertificates: false,
+    host: '192.168.1.185', //change to your IP address
+    clientId: 'test',
+  };
+
+  mqtt.createClient(options).then(function(client) {
+
+    client.on('closed', function() {
+      console.log('mqtt.event.closed');
+
+    });
+
+    client.on('error', function(msg) {
+      console.log('mqtt.event.error', msg);
+
+    });
+
+    client.on('message', function(msg) {
+      console.log('mqtt.event.message', msg);
+    });
+
+    client.on('connection-error', (data) => {
+      console.log('mqtt.event.connection-error', data);
     })
 
-    // fully customized!
-    const subObject = { a: 1, b: [1, 2, 3], c: true }
-    subObject.circularDependency = subObject // osnap!
-    console.tron.display({
-      name: '🔥 IGNITE 🔥',
-      preview: 'You should totally expand this',
-      value: {
-        '💃': 'Welcome to the future!',
-        subObject,
-        someInlineFunction: () => true,
-        someGeneratorFunction: startup,
-        someNormalFunction: selectAvatar
-      }
-    })
-  }
-  const avatar = yield select(selectAvatar)
-  // only get if we don't have it yet
-  if (!is(String, avatar)) {
-    yield put(GithubActions.userRequest('GantMan'))
-  }
+    client.on('connect', function() {
+      console.log('connected');
+      client.subscribe('/data', 0);
+      client.publish('/data', "test", 0, false);
+    });
+
+    client.connect();
+  }).catch(function(err){
+    console.log(err);
+  });
 }
