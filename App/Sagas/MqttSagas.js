@@ -14,6 +14,8 @@ import { call, put } from 'redux-saga/effects'
 import MqttActions from '../Redux/MqttRedux'
 import mqtt from 'react-native-mqtt'
 
+const prefix = 'user/device/00000000-0000-0000-0000-000000000007'
+
 export function * init () {
 
   const options = {
@@ -49,8 +51,9 @@ export function * init () {
     client.on('connect', function() {
       console.log('connected');
       client.subscribe('/data', 0);
+      client.subscribe(prefix + '/fire/status', 0);
       // client.publish('/data', "test", 0, false);
-      client.publish('/data', "rameez", 0, false);
+      // client.publish('/data', "rameez", 0, false);
     });
 
     client.connect();
