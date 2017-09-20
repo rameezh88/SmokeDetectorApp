@@ -6,7 +6,7 @@ export default () => {
   /* ------------- Assemble The Reducers ------------- */
   const rootReducer = combineReducers({
     nav: require('./NavigationRedux').reducer,
-    search: require('./SearchRedux').reducer
+    mqtt: require('./MqttRedux').reducer
   })
 
   return configureStore(rootReducer, rootSaga)

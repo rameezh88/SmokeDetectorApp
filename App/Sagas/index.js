@@ -27,7 +27,7 @@ export default function * root (dispatch) {
     takeLatest(StartupTypes.STARTUP, startup),
 
     // some sagas receive extra parameters in addition to an action
-    takeLatest(MqttTypes.INIT, init),
+    takeLatest(MqttTypes.INIT, init, dispatch),
     takeLatest(MqttTypes.PUBLISH, publish)
   ])
 }
