@@ -10,7 +10,7 @@
 *    you'll need to define a constant in that file.
 *************************************************************/
 
-import { put, select } from 'redux-saga/effects'
+import { put, select, call } from 'redux-saga/effects'
 import MqttActions from '../Redux/MqttRedux'
 import mqtt from 'react-native-mqtt'
 
@@ -28,7 +28,7 @@ export function * init (dispatch) {
     keepalive: 45,
     tls: false,
     selfSignedCertificates: false,
-    host: '192.168.40.16', //change to your IP address
+    host: '192.168.1.185', //change to your IP address
     clientId: 'test',
   };
 
@@ -62,10 +62,7 @@ export function * init (dispatch) {
 
     client.on('connect', function() {
       console.log('connected');
-      client.subscribe('/data', 0);
       client.subscribe(fireStatus, 0);
-      // client.publish('/data', "test", 0, false);
-      // client.publish('/data', "rameez", 0, false);
     });
 
     client.connect();
@@ -74,14 +71,15 @@ export function * init (dispatch) {
   });
 }
 
-export function * turnOffAlarm ({ deviceId }) {
-  yield put(MqttActions.publish(smokeCleared))
+export function * turnOffAlarm (api) {
+  yield call(api.smokeCleared); // Needs this approach since mqtt-mock code doesn't handle "smoke-cleared" message.
 }
 
 export function * publish ({ data }) {
+  // Can be used to publish commands.
   const mqtt = yield select(getMqtt);
-  // console.log('Publishing data', data);
-  mqtt.client.publish(data, "test", 0, false);
+  const { topic, message } = data;
+  mqtt.client.publish(topic, JSON.stringify(message), 0, false);
 }
 
 

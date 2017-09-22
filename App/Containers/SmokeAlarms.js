@@ -16,11 +16,39 @@ class SmokeAlarms extends Component {
     title: 'Smoke Alarms',
   }
 
+  state = {
+    alarmActive: false,
+  }
+
+  componentWillReceiveProps (nextProps) {
+    try {
+      const { mqtt } = nextProps;
+      if (mqtt.payload && mqtt.payload.sensors) {
+        this.setState({
+          alarmActive: false,
+        });
+
+        for (var i = 0, len = mqtt.payload.sensors.length; i < len; i++) {
+          const sensor = mqtt.payload.sensors[i];
+          if (sensor.alarmActive) {
+            this.setState({
+              alarmActive: true
+            })
+            break;
+          }
+        }
+
+      }
+    } catch (err) {
+      console.log('Error setting alarm state', err)
+    }
+  }
+
   _keyExtractor = (item, index) => item.deviceId
 
   _renderItem = ({ item }) => {
-    console.log('Should render item', item)
-    const { roomName, deviceName, batteryLevel, alarmActive, online, deviceId } = item;
+    const { roomName, deviceName, batteryLevel, alarmActive, online } = item;
+
     return (
       <View style={{ flex: 1, padding: 5, flexDirection: 'row', minHeight: 60 }}>
         <View style={{margin: 5, height: 10, width: 10, backgroundColor: online ? 'green' : 'red', borderRadius: 5 }}/>
@@ -37,24 +65,6 @@ class SmokeAlarms extends Component {
               }}
             >
               {roomName}
-              <View
-                style={{
-                  borderColor: alarmActive ? 'red' : 'grey',
-                  borderWidth: 1,
-                  borderRadius: 2,
-                  alignSelf: 'center',
-                  marginLeft: 10,
-                  width: 60,
-                  height: 10
-                }}
-              >
-                <Text
-                  style={{
-                    ...Fonts.style.tiny,
-                    color: alarmActive ? 'red' : 'grey',
-                  }}
-                >{ alarmActive ? 'alarm on' : 'alarm off'}</Text>
-              </View>
             </Text>
             <View style={{ flexDirection: 'row'}}>
               <Icon name={`battery-${this._getBatteryLevelForIcon(batteryLevel)}`} size={10} color={this._getBatteryColorForIcon(batteryLevel)} />
@@ -78,20 +88,56 @@ class SmokeAlarms extends Component {
                 color: Colors.charcoal
               }}
             >{deviceName}</Text>
-            <Switch
-              disabled={!alarmActive}
-              tintColor={Colors.frost}
-              onTintColor={Colors.error}
-              value={alarmActive}
-              onValueChange={(value) => {
-                console.log('Switch value', value);
-                if (!value) {
-                  this.props.turnOffAlarm(deviceId)
-                }
+            <View
+              style={{
+                borderColor: alarmActive ? 'red' : 'grey',
+                borderWidth: 1,
+                alignSelf: 'center',
+                paddingHorizontal: 3
               }}
-            />
+            >
+              <Text
+                style={{
+                  ...Fonts.style.description,
+                  color: alarmActive ? 'red' : 'grey',
+                }}
+              >{ alarmActive ? 'alarm on' : 'alarm off'}</Text>
+            </View>
           </View>
         </View>
+      </View>
+    )
+  }
+
+  _renderHeader = () => {
+    const { alarmActive } = this.state;
+    return (
+      <View style={{
+        flex: 1,
+        padding: 5,
+        backgroundColor: Colors.silver,
+        flexDirection: 'row'
+      }}>
+        <Text style={{
+          ...Fonts.style.normal,
+          flex: 1,
+          alignSelf: 'center',
+          marginLeft: 5,
+        }}>
+          { alarmActive ? 'Silence alarms!' : 'Alarms are off' }
+        </Text>
+        <Switch
+          disabled={!alarmActive}
+          tintColor={Colors.frost}
+          onTintColor={Colors.error}
+          value={alarmActive}
+          onValueChange={(value) => {
+            console.log('Switch value', value);
+            if (!value) {
+              this.props.turnOffAlarm()
+            }
+          }}
+        />
       </View>
     )
   }
@@ -132,6 +178,7 @@ class SmokeAlarms extends Component {
           data={ payload ? payload.sensors : [] }
           keyExtractor={this._keyExtractor}
           renderItem={this._renderItem}
+          ListHeaderComponent={this._renderHeader()}
         />
       </View>
     )
@@ -146,7 +193,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    turnOffAlarm: (deviceId) => dispatch(MqttActions.turnOffAlarm(deviceId)),
+    turnOffAlarm: () => dispatch(MqttActions.turnOffAlarm()),
   }
 }
 

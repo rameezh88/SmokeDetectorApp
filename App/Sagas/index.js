@@ -29,6 +29,6 @@ export default function * root (dispatch) {
     // some sagas receive extra parameters in addition to an action
     takeLatest(MqttTypes.INIT, init, dispatch),
     takeLatest(MqttTypes.PUBLISH, publish),
-    takeLatest(MqttTypes.TURN_OFF_ALARM, turnOffAlarm)
+    takeLatest(MqttTypes.TURN_OFF_ALARM, turnOffAlarm, api)
   ])
 }
