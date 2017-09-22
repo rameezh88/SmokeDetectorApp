@@ -47,9 +47,21 @@ const style = {
     fontFamily: type.base,
     fontSize: size.regular
   },
+  italicMedium: {
+    fontFamily: type.emphasis,
+    fontSize: size.medium
+  },
   description: {
     fontFamily: type.base,
     fontSize: size.medium
+  },
+  small: {
+    fontFamily: type.base,
+    fontSize: size.small
+  },
+  tiny: {
+    fontFamily: type.base,
+    fontSize: size.tiny
   }
 }
 

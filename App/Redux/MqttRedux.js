@@ -6,7 +6,8 @@ import Immutable from 'seamless-immutable'
 const { Types, Creators } = createActions({
   init: null,
   initSuccess: ['client'],
-  publish: null,
+  turnOffAlarm: ['deviceId'],
+  publish: ['data'],
   subscribe: null,
   statusUpdateSuccess: ['payload']
 })
@@ -32,6 +33,7 @@ const initSuccess = (state, { client }) => {
 }
 
 const statusUpdateSuccess = (state, { payload }) => {
+  console.log('Got data', payload);
   return {
     ...state,
     payload
@@ -43,6 +45,7 @@ const statusUpdateSuccess = (state, { payload }) => {
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.INIT]: (state) => state,
   [Types.INIT_SUCCESS]: initSuccess,
+  [Types.TURN_OFF_ALARM]: (state) => state,
   [Types.PUBLISH]: (state) => state,
   [Types.SUBSCRIBE]: (state) => state,
   [Types.STATUS_UPDATE_SUCCESS]: statusUpdateSuccess,

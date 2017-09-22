@@ -16,6 +16,7 @@ import mqtt from 'react-native-mqtt'
 
 const prefix = 'user/device/00000000-0000-0000-0000-000000000007'
 const fireStatus = prefix + '/fire/status';
+const smokeCleared = prefix + '/fire/smoke-cleared';
 
 const getMqtt = state => state.mqtt;
 
@@ -27,7 +28,7 @@ export function * init (dispatch) {
     keepalive: 45,
     tls: false,
     selfSignedCertificates: false,
-    host: '192.168.1.185', //change to your IP address
+    host: '192.168.40.16', //change to your IP address
     clientId: 'test',
   };
 
@@ -73,6 +74,14 @@ export function * init (dispatch) {
   });
 }
 
-export function * publish () {
-  const mqtt = yield select(getMqtt);
+export function * turnOffAlarm ({ deviceId }) {
+  yield put(MqttActions.publish(smokeCleared))
 }
+
+export function * publish ({ data }) {
+  const mqtt = yield select(getMqtt);
+  // console.log('Publishing data', data);
+  mqtt.client.publish(data, "test", 0, false);
+}
+
+

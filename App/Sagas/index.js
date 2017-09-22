@@ -11,7 +11,7 @@ import { MqttTypes } from '../Redux/MqttRedux'
 /* ------------- Sagas ------------- */
 
 import { startup } from './StartupSagas'
-import { init, publish } from './MqttSagas'
+import { init, publish, turnOffAlarm } from './MqttSagas'
 
 /* ------------- API ------------- */
 
@@ -28,6 +28,7 @@ export default function * root (dispatch) {
 
     // some sagas receive extra parameters in addition to an action
     takeLatest(MqttTypes.INIT, init, dispatch),
-    takeLatest(MqttTypes.PUBLISH, publish)
+    takeLatest(MqttTypes.PUBLISH, publish),
+    takeLatest(MqttTypes.TURN_OFF_ALARM, turnOffAlarm)
   ])
 }
