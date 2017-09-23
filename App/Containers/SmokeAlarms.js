@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
-import { View, Text, FlatList, Switch } from 'react-native'
+import { View, FlatList } from 'react-native'
 import { connect } from 'react-redux'
-import { Fonts, Colors } from '../Themes'
+import { Colors } from '../Themes'
 import MqttActions from '../Redux/MqttRedux'
 import AlarmItem from '../Components/AlarmItem'
+import AlarmHeaderItem from '../Components/AlarmHeaderItem'
 // Add Actions - replace 'Your' with whatever your reducer is called :)
 // import YourActions from '../Redux/YourRedux'
 
@@ -56,34 +57,20 @@ class SmokeAlarms extends Component {
 
   _renderHeader = () => {
     const { alarmActive } = this.state;
+    return (<AlarmHeaderItem
+      alarmActive={alarmActive}
+      onSwitchToggled={(value) => {
+        console.log('Switch value', value);
+        if (!value) {
+          this.props.turnOffAlarm()
+        }
+      }}
+    />)
+  }
+
+  _renderSeparator = () => {
     return (
-      <View style={{
-        flex: 1,
-        padding: 5,
-        backgroundColor: Colors.silver,
-        flexDirection: 'row'
-      }}>
-        <Text style={{
-          ...Fonts.style.normal,
-          flex: 1,
-          alignSelf: 'center',
-          marginLeft: 5,
-        }}>
-          { alarmActive ? 'Silence alarms!' : 'Alarms are off' }
-        </Text>
-        <Switch
-          disabled={!alarmActive}
-          tintColor={Colors.frost}
-          onTintColor={Colors.error}
-          value={alarmActive}
-          onValueChange={(value) => {
-            console.log('Switch value', value);
-            if (!value) {
-              this.props.turnOffAlarm()
-            }
-          }}
-        />
-      </View>
+      <View style={{ flex: 1, height: 1, backgroundColor: Colors.steel}}/>
     )
   }
 
@@ -95,7 +82,8 @@ class SmokeAlarms extends Component {
           data={ payload ? payload.sensors : [] }
           keyExtractor={this._keyExtractor}
           renderItem={this._renderItem}
-          ListHeaderComponent={this._renderHeader()}
+          ListHeaderComponent={this._renderHeader}
+          ItemSeparatorComponent={this._renderSeparator}
         />
       </View>
     )
