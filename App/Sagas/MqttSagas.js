@@ -28,7 +28,7 @@ export function * init (dispatch) {
     keepalive: 45,
     tls: false,
     selfSignedCertificates: false,
-    host: '192.168.40.16', //change to your IP address
+    host: '192.168.1.185', //change to your IP address
     clientId: 'test',
   };
 
